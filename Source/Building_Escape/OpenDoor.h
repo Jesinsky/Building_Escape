@@ -38,13 +38,13 @@ private:
 	float DoorLastOpened = 0.f;
 
 	UPROPERTY(EditAnywhere)
-	float DoorCloseDelay = 0.5f;
+	float DoorCloseDelay = 0.4f;
 
 	UPROPERTY(EditAnywhere)
 	float DoorOpenSpeed = 0.8f;
 
 	UPROPERTY(EditAnywhere)
-	float DoorCloseSpeed = 3.f;
+	float DoorCloseSpeed = 3.3f;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PressurePlate;
