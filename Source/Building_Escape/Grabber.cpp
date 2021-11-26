@@ -13,27 +13,19 @@ UGrabber::UGrabber()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
-
 
 // Called when the game starts
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-	// Checking fo the Physics Hande Component
 
-	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle)
-	{
-		// Physics is found
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("No Physics Handle Component found on %s"), *GetOwner()->GetName());
-	}
-	
+	FindPhysicsHandle();
+	SetupInputComponent();
+}
+
+void UGrabber::SetupInputComponent()
+{
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (InputComponent)
 	{
@@ -44,13 +36,26 @@ void UGrabber::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Input Component MISSING"), *GetOwner()->GetName());
 	}
-	
-	
+}
+
+// Checking fo the Physics Hande Component
+void UGrabber::FindPhysicsHandle()
+{
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicsHandle)
+	{
+		// Physics is found
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Physics Handle Component found on %s"), *GetOwner()->GetName());
+	}
 }
 
 void UGrabber::Grab()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grabber Pressed"));
+	GetFisrtPhysicsBodyInReach();
 }
 
 void UGrabber::Release()
@@ -63,8 +68,11 @@ void UGrabber::Release()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
-	// Get players viewport
+FHitResult UGrabber::GetFisrtPhysicsBodyInReach() const
+{
+		// Get players viewport
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViePointRotation;
 
@@ -76,11 +84,9 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	// 	*PlayerViewPointLocation.ToString(), 
 	// 	*PlayerViePointRotation.ToString());
 
-	// Draw a line from player showing the reach distance
-
 	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViePointRotation.Vector() * Reach;
-
-	DrawDebugLine(
+	// Debug line to see the players reach distance
+	/*DrawDebugLine(
 		GetWorld(),
 		PlayerViewPointLocation,
 		LineTraceEnd,
@@ -89,7 +95,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		0.f,
 		0,
 		5.f
-	);
+	 );*/
 
 	FHitResult Hit;
 	// Ray-cast out to certain distance (Reach)
@@ -112,7 +118,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		UE_LOG(LogTemp, Warning, TEXT("Line trace has hit:%s"), *(ActorHit->GetName()));
 	}
 	
-
-	// Loggin out to test
+	return Hit;
 }
 
