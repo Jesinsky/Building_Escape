@@ -42,7 +42,7 @@ void UGrabber::SetupInputComponent()
 void UGrabber::FindPhysicsHandle()
 {
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle == nullptr)
+	if (!PhysicsHandle) //== nullptr *Diferent ways to protect from a null pointer*
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Physics Handle Component found on %s"), *GetOwner()->GetName());
 	}
@@ -52,21 +52,24 @@ void UGrabber::Grab()
 {
 	FHitResult HitResult = GetFisrtPhysicsBodyInReach();
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
+	AActor* ActorHit = HitResult.GetActor();
 
-	if (HitResult.GetActor())
+	if (ActorHit)
 	{
+		if (!PhysicsHandle) {return;}
 		PhysicsHandle->GrabComponentAtLocation
-			(
-				ComponentToGrab,
-				NAME_None,
-				GetPlayersReach()
-			);
+		(
+			ComponentToGrab,
+			NAME_None,
+			GetPlayersReach()
+		);
 	}
 }
 
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) {return;}
 	// UE_LOG(LogTemp, Warning, TEXT("Grabber Released"));
 	PhysicsHandle->ReleaseComponent();
 }
@@ -76,6 +79,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!PhysicsHandle) {return;}
 	// If the physics handle is attach
 	if (PhysicsHandle->GrabbedComponent)
 	{

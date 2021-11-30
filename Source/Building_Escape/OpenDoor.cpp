@@ -2,6 +2,7 @@
 
 
 #include "OpenDoor.h"
+#include "Components/AudioComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -31,8 +32,6 @@ void UOpenDoor::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("The actor: %s has the open door component on it, but no pressureplate set!"), *GetOwner()->GetName());
 	}
-	
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 
@@ -83,6 +82,7 @@ float UOpenDoor::TotalMassOfActors() const
 	
 	// Find All Overlapping Actors
 	TArray<AActor*>OverlappingActors;
+	if (!PressurePlate) {return TotalMass;}
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
 
 	// Add Up Their Masses
@@ -91,6 +91,5 @@ float UOpenDoor::TotalMassOfActors() const
 		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 	}
 	
-
 	return TotalMass;
 }
