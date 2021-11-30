@@ -27,6 +27,11 @@ public:
 	void OpenDoor(float Delta);
 	void CloseDoor(float Delta);
 	float TotalMassOfActors() const;
+	void FindAudioComponent();
+	void FindPressurePlate();
+
+	bool OpenDoorAudio = false;
+	bool CloseDoorAudio = true;
 
 private:
 
@@ -52,4 +57,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PressurePlate = nullptr;
+
+	UPROPERTY()
+	UAudioComponent* AudioComponent = nullptr;
 };
